@@ -1,87 +1,48 @@
 const path = require("path");
-const http = require("http");
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const { Server } = require("socket.io");
 const { initDatabase } = require("./db");
 
 const authRoutes = require("./server/routes/auth");
-const projectRoutes = require("./server/routes/projects");
-const editorRoutes = require("./server/routes/editor");
-const chatRoutes = require("./server/routes/chat");
-const analyticsRoutes = require("./server/routes/analytics");
-const { registerSocketHandlers } = require("./server/sockets");
 
 dotenv.config();
 
 const FRONTEND_ROOT = path.resolve(__dirname, "..", "frontend");
 
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: true,
-    credentials: true,
-  },
-});
-
-const sessionMiddleware = session({
-  secret: process.env.SESSION_SECRET || "tracewrite-secret",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 8,
-  },
-});
 
 app.use(cors({ origin: true, credentials: true }));
-app.use(express.json({ limit: "2mb" }));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(sessionMiddleware);
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "tracewrite-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 * 8 },
+  })
+);
 
 app.use("/public", express.static(path.join(FRONTEND_ROOT, "public")));
-app.use("/vendor", express.static(path.join(__dirname, "node_modules")));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/editor", editorRoutes);
-app.use("/api/chat", chatRoutes);
-app.use("/api/analytics", analyticsRoutes);
-
-function sendView(file) {
-  return (req, res) => res.sendFile(path.join(FRONTEND_ROOT, "views", file));
-}
 
 app.get("/", (req, res) => {
-  if (req.session.user) {
-    return res.redirect("/dashboard");
-  }
-  return res.redirect("/login");
+  return res.redirect(req.session.user ? "/dashboard" : "/login");
 });
 
-app.get("/login", sendView("login.html"));
-app.get("/register", sendView("register.html"));
-app.get("/dashboard", sendView("dashboard.html"));
-app.get("/projects", sendView("projects.html"));
-app.get("/editor", sendView("editor.html"));
-app.get("/chat", sendView("chat.html"));
-app.get("/analytics", sendView("analytics.html"));
-app.get("/profile", sendView("profile.html"));
+app.get("/login", (req, res) => res.sendFile(path.join(FRONTEND_ROOT, "views", "login.html")));
+app.get("/register", (req, res) => res.sendFile(path.join(FRONTEND_ROOT, "views", "register.html")));
+app.get("/dashboard", (req, res) => res.sendFile(path.join(FRONTEND_ROOT, "views", "dashboard.html")));
 
-registerSocketHandlers(io);
+const PORT = process.env.PORT || 3000;
 
-const PORT = Number(process.env.PORT || 3000);
 initDatabase()
-  .then(() => {
-    server.listen(PORT, () => {
-      // eslint-disable-next-line no-console
-      console.log(`TraceWrite running on http://localhost:${PORT}`);
-    });
-  })
+  .then(() => app.listen(PORT, () => console.log(`TraceWrite running on http://localhost:${PORT}`)))
   .catch((err) => {
-    // eslint-disable-next-line no-console
     console.error("Failed to initialize schema:", err.message);
     process.exit(1);
   });

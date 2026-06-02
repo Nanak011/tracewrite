@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CollabWrite - Login</title>
+    <link rel="stylesheet" href="../public/css/style.css" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <h1>CollabWrite Login</h1>
+        <p class="muted">Collaborative academic writing platform</p>
+
+        <form id="loginForm">
+          <label>Email</label>
+          <input type="email" id="email" required />
+
+          <label>Password</label>
+          <input type="password" id="password" required />
+
+          <button type="submit">Login</button>
+        </form>
+
+        <form id="mfaForm" style="display:none; margin-top:12px;">
+          <label>MFA OTP</label>
+          <input type="text" id="mfaOtp" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" required />
+          <button type="submit">Verify and Login</button>
+        </form>
+
+        <div id="authMessage"></div>
+        <p class="muted">No account? <a href="register.html">Register here</a></p>
+      </div>
+    </div>
+
+    <script src="../public/js/common.js" defer></script>
+    <script src="../public/js/login.js" defer></script>
+  </body>
+</html>

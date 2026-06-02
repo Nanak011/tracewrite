@@ -29,20 +29,26 @@ async function sendOtpEmail({ to, name, otp, purpose }) {
   const text = `${intro}\n\nCode: ${otp}\n\nThis code expires in 10 minutes.`;
 
   if (!transporter) {
-    // Safe local fallback so developers can test OTP flows without paid infrastructure.
-    // eslint-disable-next-line no-console
     console.log(`[OTP DEV MODE] ${purpose} code for ${to}: ${otp}`);
     return { simulated: true };
   }
 
-  await transporter.sendMail({
-    from,
-    to,
-    subject,
-    text,
-  });
-
-  return { simulated: false };
+  try {
+    await transporter.sendMail({
+      from,
+      to,
+      subject,
+      text,
+    });
+    return { simulated: false };
+  } catch (err) {
+    console.error(`[OTP EMAIL ERROR] Failed to send ${purpose} email to ${to}:`, err.message || err);
+    if (String(process.env.OTP_DEV_FALLBACK || "false").toLowerCase() === "true") {
+      console.log(`[OTP DEV MODE] ${purpose} code for ${to}: ${otp}`);
+      return { simulated: true, error: err };
+    }
+    throw err;
+  }
 }
 
 module.exports = { sendOtpEmail };

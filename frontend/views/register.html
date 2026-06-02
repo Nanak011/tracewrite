@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CollabWrite - Register</title>
+    <link rel="stylesheet" href="../public/css/style.css" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-card">
+        <h1>Create Account</h1>
+        <p class="muted">Start collaborating on your report</p>
+
+        <form id="registerForm">
+          <label>Name</label>
+          <input type="text" id="name" required />
+
+          <label>Email</label>
+          <input type="email" id="email" required />
+
+          <label>Password</label>
+          <input type="password" id="password" required />
+
+          <button type="submit">Register</button>
+        </form>
+
+        <section id="emailOtpSection" style="display:none; margin-top:12px;">
+          <p class="muted" style="margin-top:0;">Enter the verification code sent to <strong id="verifyEmailLabel"></strong></p>
+          <form id="verifyEmailForm">
+            <label>Email OTP</label>
+            <input type="text" id="emailOtp" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" required />
+            <button type="submit">Verify Email</button>
+          </form>
+          <button id="resendEmailOtpBtn" type="button" style="margin-top:8px;">Resend OTP</button>
+        </section>
+
+        <div id="authMessage"></div>
+        <p class="muted">Already have an account? <a href="login.html">Login</a></p>
+      </div>
+    </div>
+
+    <script src="../public/js/common.js" defer></script>
+    <script src="../public/js/register.js" defer></script>
+  </body>
+</html>

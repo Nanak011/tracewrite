@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         email: pendingEmail,
         otp: document.getElementById("emailOtp").value,
       });
-      window.location.href = "/dashboard";
+      window.location.href = "/views/dashboard.html";
     } catch (err) {
       showMessage("authMessage", err.message, "error");
     }

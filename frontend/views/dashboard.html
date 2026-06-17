@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CollabWrite - Dashboard</title>
+    <link rel="stylesheet" href="/public/css/style.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">CollabWrite</div>
+        <a class="menu-item active" href="/views/dashboard.html">Home</a>
+        <a class="menu-item" href="/views/projects.html">Projects</a>
+        <a class="menu-item" href="/views/editor.html">Editor</a>
+        <a class="menu-item" href="/views/chat.html">Chat</a>
+        <a class="menu-item" href="/views/profile.html">Profile</a>
+      </aside>
+
+      <div class="content-wrap">
+        <header class="topbar">
+          <strong id="pageTitle">Home Dashboard</strong>
+          <span id="userInfo" class="badge"></span>
+        </header>
+
+        <main class="page-body">
+          <section class="card" style="margin-bottom:14px;">
+            <h3>Pending Invitations</h3>
+            <div id="pendingInvitations" class="muted">No pending invitations.</div>
+          </section>
+
+          <section class="grid grid-3" id="projectCards"></section>
+          <section class="card" style="margin-top:14px;">
+            <h3>Recent Activity</h3>
+            <div id="recentActivity" class="muted">No recent activity yet.</div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/public/js/common.js"></script>
+    <script src="/public/js/dashboard.js"></script>
+  </body>
+</html>
+

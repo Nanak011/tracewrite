@@ -1,6 +1,15 @@
-const API_BASE_URL = window.API_BASE_URL || "http://127.0.0.1:3000";
+const API_BASE_URL = window.API_BASE_URL || "http://localhost:3000";
 
 const API = {
+  async get(url) {
+    const res = await fetch(`${API_BASE_URL}${url}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+    return parseJson(res);
+  },
+  
   async post(url, body) {
     const res = await fetch(`${API_BASE_URL}${url}`, {
       method: "POST",
@@ -25,4 +34,13 @@ function showMessage(targetId, text, type = "info") {
   if (!el) return;
   el.className = `auth-message ${type}`;
   el.textContent = text;
+}
+
+async function getCurrentUser() {
+  try {
+    const data = await API.get("/api/auth/me");
+    return data.user || null;
+  } catch (err) {
+    return null;
+  }
 }

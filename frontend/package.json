@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "live-server --host=127.0.0.1 --port=3001 --open=views/login.html"
+    "dev": "live-server --host=localhost --port=3001 --open=views/login.html"
   },
   "keywords": [],
   "author": "",

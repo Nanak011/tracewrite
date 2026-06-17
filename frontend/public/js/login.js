@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      window.location.href = "/dashboard";
+      window.location.href = "/views/dashboard.html";
     } catch (err) {
       showMessage("authMessage", err.message, "error");
     }
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
         challengeToken: mfaChallengeToken,
         otp: document.getElementById("mfaOtp").value,
       });
-      window.location.href = "/dashboard";
+      window.location.href = "/views/dashboard.html";
     } catch (err) {
       showMessage("authMessage", err.message, "error");
     }

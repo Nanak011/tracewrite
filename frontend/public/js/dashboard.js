@@ -68,7 +68,7 @@
           <span class="badge">Members: ${p.member_count}</span>
         </div>
         <div class="row-wrap" style="margin-top:10px;">
-          <a href="/views/editor.html?projectId=${p.id}"><button>Open Editor</button></a>
+          <a href="/editor?projectId=${p.id}"><button>Open Editor</button></a>
         </div>
       `;
       container.appendChild(card);

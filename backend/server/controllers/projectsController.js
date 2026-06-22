@@ -1,6 +1,6 @@
 const PDFDocument = require('pdfkit');
 const { query } = require("../../db");
-const { stripHtml } = require("string-strip-html");
+const { stripHtml } = require("../serverHelpers");
 
 async function listProjects(req, res) {
 
@@ -89,7 +89,7 @@ async function getProjectDetails(req, res) {
       [projectId]
     );
 
-    res.json({ project: projectRows[0], members, assignments });
+    res.json({ project: projectRows[0], members});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

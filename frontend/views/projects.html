@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CollabWrite - Projects</title>
+    <link rel="stylesheet" href="/public/css/style.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">CollabWrite</div>
+        <a class="menu-item" href="/dashboard">Home</a>
+        <a class="menu-item active" href="/projects">Projects</a>
+        <a class="menu-item" href="/editor">Editor</a>
+        <a class="menu-item" href="/chat">Chat</a>
+        <a class="menu-item" href="/profile">Profile</a>
+      </aside>
+
+      <div class="content-wrap">
+        <header class="topbar">
+          <strong id="pageTitle">Projects</strong>
+        </header>
+
+        <main class="page-body">
+          <div class="grid grid-3">
+            <section class="card">
+              <h3>Create Project</h3>
+              <form id="createProjectForm">
+                <label>Title</label>
+                <input id="title" required />
+                <label>Description</label>
+                <textarea id="description"></textarea>
+                <button type="submit">Create</button>
+              </form>
+              <div id="projectMessage"></div>
+            </section>
+
+            <section class="card" style="grid-column: span 2;">
+              <h3>My Projects</h3>
+              <div id="projectsList" class="grid"></div>
+            </section>
+          </div>
+
+          <section class="card" style="margin-top:14px;">
+            <h3>Project Management</h3>
+            <p class="muted">Select project below to manage member invitations.</p>
+
+            <div id="projectActiveUsers" class="alert info">Active users will appear after selecting a project.</div>
+
+            <div class="row-wrap">
+              <label style="margin:0;">Project</label>
+              <select id="manageProjectSelect" style="max-width:280px;"></select>
+            </div>
+
+            <div class="grid grid-3" style="margin-top:10px;">
+              <form id="inviteForm" class="card">
+                <h4>Invite Member</h4>
+                <label>User Email</label>
+                <input id="inviteEmail" type="email" required />
+                <label>Role</label>
+                <select id="inviteRole">
+                  <option>Editor</option>
+                  <option>Viewer</option>
+                </select>
+                <button type="submit">Invite</button>
+              </form>
+
+              <div class="card">
+                <h4>Owner Actions</h4>
+                <p class="muted">Invites are owner-only. Export and analytics are in the Editor actions menu.</p>
+                <div id="manageMessage"></div>
+              </div>
+
+              <div class="card" style="grid-column: span 3;">
+                <h4>Project Members</h4>
+                <p class="muted">Owners can remove Editor/Viewer members from this project.</p>
+                <div id="membersList" class="grid"></div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/public/js/common.js"></script>
+    <script src="/public/js/projects.js"></script>
+  </body>
+</html>

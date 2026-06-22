@@ -313,6 +313,16 @@ button:hover {
   color: var(--blue-deep);
 }
 
+.danger-btn {
+  background: #b91c1c;
+  color: #ffffff;
+}
+
+.danger-btn:hover {
+  background: #991b1b;
+}
+
+
 @media (max-width: 980px) {
   .layout {
     grid-template-columns: 1fr;

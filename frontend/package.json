@@ -4,13 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "live-server --host=localhost --port=3001 --open=views/login.html"
+    "dev": "live-server --host=localhost --port=3001 --open=views/login.html",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
     "live-server": "^1.2.2"
   }
 }

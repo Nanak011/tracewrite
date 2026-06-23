@@ -1,8 +1,10 @@
 let pendingEmail = "";
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("registerForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+  const registerForm = document.getElementById("registerForm");
+  if (registerForm) {
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
     try {
       const result = await API.post("/api/auth/register", {
         name: document.getElementById("name").value,
@@ -18,23 +20,29 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       showMessage("authMessage", err.message, "error");
     }
-  });
+    });
+  }
 
-  document.getElementById("verifyEmailForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+  const verifyEmailForm = document.getElementById("verifyEmailForm");
+  if (verifyEmailForm) {
+    verifyEmailForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
     try {
       await API.post("/api/auth/verify-email", {
         email: pendingEmail,
         otp: document.getElementById("emailOtp").value,
       });
-      window.location.href = "/dashboard";
+      window.redirect("/dashboard");
     } catch (err) {
       showMessage("authMessage", err.message, "error");
     }
-  });
+    });
+  }
 
-  document.getElementById("resendEmailOtpBtn").addEventListener("click", async () => {
-    try {
+  const resendBtn = document.getElementById("resendEmailOtpBtn");
+  if (resendBtn) {
+    resendBtn.addEventListener("click", async () => {
+      try {
       if (!pendingEmail) {
         throw new Error("No registration email found. Register first.");
       }
@@ -43,5 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       showMessage("authMessage", err.message, "error");
     }
-  });
+    });
+  }
 });

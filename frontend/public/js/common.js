@@ -45,7 +45,6 @@ async function getCurrentUser() {
   }
 }
 
-// Wrapper to allow easy testing of redirects
 window.redirect = function(url) {
   window.location.assign(url);
 };

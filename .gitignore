@@ -1,3 +1,6 @@
 node_modules/
 .env
 notes.txt
+backend/coverage/
+frontend/coverage/
+UNIT_TESTING_STEPS.md

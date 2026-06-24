@@ -1,8 +1,10 @@
 const path = require("path");
+const http = require("http");
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const { Server } = require("socket.io");
 const { initDatabase } = require("./db");
 
 
@@ -10,6 +12,8 @@ const { initDatabase } = require("./db");
 // routes
 const authRoutes = require("./server/routes/auth");
 const projectRoutes = require("./server/routes/projects");
+const chatRoutes = require("./server/routes/chat");
+const { registerSocketHandlers } = require("./server/sockets");
 
 
 dotenv.config({ path: path.join(__dirname, ".env") });
@@ -19,6 +23,14 @@ const FRONTEND_ROOT = path.resolve(__dirname, "..", "frontend");
 
 
 const app = express();
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: true,
+    credentials: true,
+  },
+});
 
 // session configuration
 const sessionMiddleware = session({
@@ -44,7 +56,7 @@ app.use("/public", express.static(path.join(FRONTEND_ROOT, "public")));
 //  api endpoints
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
-
+app.use("/api/chat", chatRoutes);
 // HTML page routes
 
 function sendView(file) {
@@ -61,7 +73,9 @@ app.get("/login", sendView("login.html"));
 app.get("/register", sendView("register.html"));
 app.get("/dashboard", sendView("dashboard.html"));
 app.get("/projects", sendView("projects.html"));
+app.get("/chat", sendView("chat.html"));
 
+registerSocketHandlers(io);
 
 const PORT = Number(process.env.PORT || 3000);
 
@@ -69,7 +83,7 @@ const PORT = Number(process.env.PORT || 3000);
 initDatabase()
   .then(() => {
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`TraceWrite running on http://localhost:${PORT}`);
     });
   })

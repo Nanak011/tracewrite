@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CollabWrite - Profile</title>
+    <link rel="stylesheet" href="/public/css/style.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">CollabWrite</div>
+        <a class="menu-item" href="/dashboard">Home</a>
+        <a class="menu-item" href="/projects">Projects</a>
+        <a class="menu-item" href="/editor">Editor</a>
+        <a class="menu-item" href="/chat">Chat</a>
+        <a class="menu-item active" href="/profile">Profile</a>
+      </aside>
+
+      <div class="content-wrap">
+        <header class="topbar">
+          <strong>Profile</strong>
+          <button id="logoutBtn" style="width:auto;">Logout</button>
+        </header>
+
+        <main class="page-body">
+          <section class="card">
+            <h3>User Profile</h3>
+            <p><strong>Name:</strong> <span id="profileName"></span></p>
+            <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+            <p><strong>User Color:</strong> <span id="profileColor"></span></p>
+            <p><strong>Email Verified:</strong> <span id="emailVerifiedBadge" class="badge">-</span></p>
+            <p><strong>MFA:</strong> <span id="mfaBadge" class="badge">-</span></p>
+          </section>
+
+          <section class="card" style="margin-top:14px; max-width:520px;">
+            <h3>Reset Password</h3>
+            <form id="resetPasswordForm">
+              <label>Current Password</label>
+              <input id="currentPassword" type="password" required />
+              <label>New Password</label>
+              <input id="newPassword" type="password" minlength="6" required />
+              <button type="submit">Update Password</button>
+            </form>
+            <div id="passwordMessage"></div>
+          </section>
+
+          <section class="card" style="margin-top:14px; max-width:520px;">
+            <h3>Security Settings</h3>
+            <form id="mfaForm">
+              <label style="display:flex; align-items:center; gap:8px;">
+                <input id="mfaEnabled" type="checkbox" style="width:auto;" />
+                Enable Email MFA at login
+              </label>
+              <label>Confirm with Current Password</label>
+              <input id="mfaCurrentPassword" type="password" required />
+              <button type="submit">Save MFA Setting</button>
+            </form>
+            <div id="mfaMessage"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/public/js/common.js"></script>
+    <script src="/public/js/profile.js"></script>
+  </body>
+</html>

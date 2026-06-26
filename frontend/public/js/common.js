@@ -132,6 +132,19 @@ function updateChatNavBadge() {
   });
 }
 
+
+function attachLogoutButton() {
+  const btn = document.getElementById("logoutBtn");
+  if (!btn) return;
+
+  btn.addEventListener("click", async () => {
+    if (!window.confirm("Are you sure you want to log out?")) {
+      return;
+    }
+    await API.post("/api/auth/logout", {});
+    window.location.href = "/login";
+  });
+}
 async function ensureSocketIoLoaded() {
   if (window.io) return;
 

@@ -74,6 +74,7 @@ app.get("/register", sendView("register.html"));
 app.get("/dashboard", sendView("dashboard.html"));
 app.get("/projects", sendView("projects.html"));
 app.get("/chat", sendView("chat.html"));
+app.get("/profile", sendView("profile.html"));
 
 registerSocketHandlers(io);
 

@@ -1,0 +1,35 @@
+Step 1: Project picker + single page editor
+
+Implementation Log
+1. Frontend HTML (editor.html): Created a visual paper simulator (.a4-sheet) nested in a scroll container, loaded Quill.js from CDN, and added a select form.
+2. Backend Routing (routes/editor.js): Exposed standard document fetch (GET) and update (PUT) endpoints under authorization.
+3. Backend Controller (controllers/editorController.js): Built queries inside getProjectDocument and saveProjectDocument that query and upsert into the project_documents table, using XSS HTML sanitization.
+4. Frontend JS (editor.js): Handled auth checks, fetched project dropdown lists, loaded content, initialized Quill, and implemented a 5-second background checking autosave loop.
+
+Testing Record
+- User authentication checkpoint: Passed (Redirects to /login if unauthorized).
+- Project list fetch check: Passed (Projects loaded inside dropdown).
+- Document fetch checkout: Passed (Loads existing database content).
+- Content change detection: Passed (Timer fires only when text has changed).
+- Autosave integrity: Passed (Edits persisted on hard refresh).
+
+
+Working steps:
+
+Step 1: Configuration Initialization First, global storage state variables (currentProjectId, quillInstance, saveTimer, originalContent) are initialized as blank or null placeholders. Then, the layout for the rich text toolbar is established through the TOOLBAR_OPTIONS array constant, defining exactly which formatting buttons (like bold, headers, and lists) will be available.
+
+Step 2: Authentication Check on Entry The runtime flow starts at the very bottom of the script when the self-invoking init function automatically runs on page load. The user's status is checked through the getCurrentUser function; if no valid user is returned, the browser is instantly sent to the /login URL.
+
+Step 3: Populating the Project Picker If the user is logged in, the initProjectPicker function is called. This function executes a GET request to the backend using API.get("/api/projects"). The response array is mapped into HTML <option> tags to fill a dropdown selection menu (projectSelect).
+
+Step 4: Loading the Chosen Project When a click event happens on the openProjectBtn button, the hidden project selection screen (projectPicker) is hidden (display = "none"), and the selected ID is passed into loadProjectDocument(projectId). This function immediately sends another request via API.get to fetch the specific project's HTML and permission properties.
+
+Step 5: Spinning up the Text Editor Package Once the project data arrives, the quillInstance is initialized through the new Quill constructor, which targets the #singleEditor HTML container. This interface is built by an imported rich text editor package, and the configuration assigns the pre-defined TOOLBAR_OPTIONS layout to its formatting toolbar module.
+
+Step 6: Enforcing Permissions and Content Loading The saved HTML is inserted into the editor workspace via quillInstance.root.innerHTML = originalContent. If the backend payload indicates the user does not have writing privileges (canEdit is false), the Quill instance configuration applies a readOnly: !canEdit rule to completely lock down the text area.
+
+Step 7: The Background Autosave Loop If the user has permission to edit, the startAutosaveLoop function is invoked. This sets up a background tracking loop through a setInterval timer that runs every 5000 milliseconds (5 seconds).
+
+Step 8: Smart Modification Checking and Saving Every 5 seconds, the background timer runs a comparison check. It checks if the current live HTML inside quillInstance.root.innerHTML is different from the saved string inside originalContent. Because of this check, if nothing has been typed, the script skips making any network requests to prevent slamming the database.
+
+Step 9: Database Synchronization and Error Catching When modifications are detected by the timer, an HTTP PUT request is fired off via API.put to upload the new text string to the database. Once the save succeeds, originalContent is updated to match the new text to establish a new baseline. If the server drops or a timeout happens, the exception is caught by a try...catch block, the error is safely logged to the console, and a failure warning is pushed to the updateStatus system to alert the user on screen.

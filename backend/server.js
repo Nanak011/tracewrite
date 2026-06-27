@@ -12,8 +12,10 @@ const { initDatabase } = require("./db");
 // routes
 const authRoutes = require("./server/routes/auth");
 const projectRoutes = require("./server/routes/projects");
+const editorRoutes = require("./server/routes/editor");
 const chatRoutes = require("./server/routes/chat");
 const { registerSocketHandlers } = require("./server/sockets");
+
 
 
 dotenv.config({ path: path.join(__dirname, ".env") });
@@ -56,6 +58,7 @@ app.use("/public", express.static(path.join(FRONTEND_ROOT, "public")));
 //  api endpoints
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/editor", editorRoutes);
 app.use("/api/chat", chatRoutes);
 // HTML page routes
 
@@ -73,6 +76,7 @@ app.get("/login", sendView("login.html"));
 app.get("/register", sendView("register.html"));
 app.get("/dashboard", sendView("dashboard.html"));
 app.get("/projects", sendView("projects.html"));
+app.get("/editor", sendView("editor.html"));
 app.get("/chat", sendView("chat.html"));
 app.get("/profile", sendView("profile.html"));
 

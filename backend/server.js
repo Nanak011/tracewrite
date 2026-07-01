@@ -53,7 +53,7 @@ app.use(sessionMiddleware);
 
 // serve static files
 app.use("/public", express.static(path.join(FRONTEND_ROOT, "public")));
-
+app.use("/vendor", express.static(path.join(__dirname, "node_modules")));
 
 //  api endpoints
 app.use("/api/auth", authRoutes);

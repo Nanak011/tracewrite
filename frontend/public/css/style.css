@@ -183,6 +183,50 @@ button:hover {
   margin-top: 0;
 }
 
+.table-note {
+  margin: -6px 0 12px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--gray-border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--white);
+}
+
+.table thead th {
+  background: #eaf1ff;
+  color: var(--blue-deep);
+  font-weight: 700;
+  text-align: left;
+}
+
+.table th,
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--gray-border);
+  vertical-align: top;
+}
+
+.table tbody tr:hover {
+  background: #f8fbff;
+}
+
+.table tfoot th,
+.table tfoot td {
+  background: #f2f6fc;
+  font-weight: 700;
+}
+
+.table tfoot tr:last-child th,
+.table tfoot tr:last-child td,
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .row-wrap {
   display: flex;
   flex-wrap: wrap;
@@ -383,6 +427,20 @@ button:hover {
 .chat-message.mine .chat-bubble {
   background: var(--blue);
   color: var(--white);
+}
+
+
+/* font size */
+/* Display the proper point sizes in the dropdown picker overlay */
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value]::before {
+  content: attr(data-value) !important;
+}
+
+/* Handle the default/unset size label */
+.ql-snow .ql-picker.ql-size .ql-picker-label:not([data-value])::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item:not([data-value])::before {
+  content: '12pt' !important; /* Or whatever your default base size is */
 }
 
 

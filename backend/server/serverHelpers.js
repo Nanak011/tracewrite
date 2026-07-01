@@ -1,16 +1,31 @@
+// function colorFromUserId(userId) {
+//   const palette = [
+//     "#0B5ED7",
+//     "#0D9488",
+//     "#CA8A04",
+//     "#B91C1C",
+//     "#7C3AED",
+//     "#0369A1",
+//     "#15803D",
+//     "#C2410C",
+//   ];
+//   const idx = Math.abs(Number(userId || 0)) % palette.length;
+//   return palette[idx];
+// }
+// new color palette logic
 function colorFromUserId(userId) {
-  const palette = [
-    "#0B5ED7",
-    "#0D9488",
-    "#CA8A04",
-    "#B91C1C",
-    "#7C3AED",
-    "#0369A1",
-    "#15803D",
-    "#C2410C",
-  ];
-  const idx = Math.abs(Number(userId || 0)) % palette.length;
-  return palette[idx];
+  const id = String(userId || "");
+  let hash = 0;
+
+  for (let i = 0; i < id.length; i += 1) {
+    hash = (hash * 33 + id.charCodeAt(i)) >>> 0;
+  }
+
+  const hue = (hash * 137.508) % 360;
+  const saturation = 65;
+  const lightness = 48;
+
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
 const sanitizeHtml = require("sanitize-html");

@@ -69,7 +69,7 @@ async function getCurrentUser() {
 }
 
 
-const CHAT_UNREAD_STORAGE_KEY = "collabwrite_chat_unread_v1";
+const CHAT_UNREAD_STORAGE_KEY = "tracewrite_chat_unread_v1";
 
 function loadChatUnreadState() {
   try {

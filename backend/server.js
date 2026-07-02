@@ -15,6 +15,7 @@ const projectRoutes = require("./server/routes/projects");
 const editorRoutes = require("./server/routes/editor");
 const chatRoutes = require("./server/routes/chat");
 const analyticsRoutes = require("./server/routes/analytics");
+const formatterRoutes = require("./server/routes/formatter");
 const { registerSocketHandlers } = require("./server/sockets");
 
 
@@ -52,6 +53,8 @@ app.use(express.json( {limit: "10mb"  }));
 app.use(express.urlencoded({ extended: true }));
 app.use(sessionMiddleware);
 
+app.set('io', io);
+
 // serve static files
 app.use("/public", express.static(path.join(FRONTEND_ROOT, "public")));
 app.use("/vendor", express.static(path.join(__dirname, "node_modules")));
@@ -62,6 +65,7 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/editor", editorRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/formatter", formatterRoutes);
 
 // HTML page routes
 
@@ -80,6 +84,7 @@ app.get("/register", sendView("register.html"));
 app.get("/dashboard", sendView("dashboard.html"));
 app.get("/projects", sendView("projects.html"));
 app.get("/editor", sendView("editor.html"));
+app.get("/formatter", sendView("formatter.html"));
 app.get("/chat", sendView("chat.html"));
 app.get("/analytics", sendView("analytics.html"));
 app.get("/profile", sendView("profile.html"));

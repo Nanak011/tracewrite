@@ -8,4 +8,9 @@ For backend:
 
 cd backend
 npm install nodemailer bcryptjs sanitize-html pdfkit express-session dotenv
+npm install docx
+npm install mammoth
 
+cd nlp
+pip install python-docx pypdf spacy nltk
+python -m spacy download en_core_web_sm

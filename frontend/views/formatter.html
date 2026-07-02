@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Formatter - TraceWrite</title>
+  <link rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <script src="/vendor/socket.io/client-dist/socket.io.js"></script>
+  <style>
+    .formatter-container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+    .preview-pane {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #f8f9fa;
+    }
+    .preview-content {
+      background: white;
+      padding: 40px;
+      max-width: 8.5in;
+      margin: 0 auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      min-height: 11in;
+    }
+    .status-panel {
+      width: 350px;
+      padding: 20px;
+      background: #343a40;
+      color: white;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+    .status-panel h6 {
+      font-size: 13px;
+      margin-top: 12px;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .status-panel .form-control,
+    .status-panel .form-select {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      font-size: 12px;
+    }
+    .status-panel .form-control:focus,
+    .status-panel .form-select:focus {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.4);
+      color: white;
+      box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.1);
+    }
+    .status-panel .form-select option {
+      background: #343a40;
+      color: white;
+    }
+    .status-panel .form-check-input {
+      background-color: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.3);
+    }
+    .status-panel .form-check-input:checked {
+      background-color: #28a745;
+      border-color: #28a745;
+    }
+    .status-panel .form-label {
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    .status-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .status-item.active {
+      background: #28a745;
+      animation: pulse 1s infinite;
+    }
+    .status-item.complete {
+      background: rgba(40, 167, 69, 0.3);
+    }
+    .status-item.error {
+      background: #dc3545;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .action-buttons {
+      position: fixed;
+      bottom: 20px;
+      right: 370px;
+      z-index: 1000;
+    }
+    .progress-bar {
+      height: 4px;
+      background: #28a745;
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/dashboard">TraceWrite</a>
+      <div>
+        <span class="text-light" id="projectTitle"></span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="formatter-container">
+    <div class="preview-pane">
+      <div class="progress" style="height: 4px;">
+        <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%"></div>
+      </div>
+      <div class="preview-content" id="previewContent">
+        <p class="text-muted text-center">Initializing formatter...</p>
+      </div>
+    </div>
+
+    <div class="status-panel">
+      <h5>Formatting Options</h5>
+      
+      <!-- Font Settings -->
+      <div class="mb-3">
+        <h6 class="text-muted">Font Settings</h6>
+        <div class="form-group mb-2">
+          <label for="fontName" class="form-label" style="font-size: 12px;">Body Font</label>
+          <select class="form-select form-select-sm" id="fontName">
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Arial">Arial</option>
+            <option value="Calibri">Calibri</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Garamond">Garamond</option>
+          </select>
+        </div>
+        <div class="form-group mb-2">
+          <label for="bodyFontSize" class="form-label" style="font-size: 12px;">Body Font Size (pt)</label>
+          <input type="number" class="form-control form-control-sm" id="bodyFontSize" value="12" min="8" max="16">
+        </div>
+        <div class="form-group mb-2">
+          <label for="headingFontName" class="form-label" style="font-size: 12px;">Heading Font</label>
+          <select class="form-select form-select-sm" id="headingFontName">
+            <option value="">Same as body</option>
+            <option value="Arial">Arial</option>
+            <option value="Calibri">Calibri</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Times New Roman">Times New Roman</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Heading Sizes -->
+      <div class="mb-3">
+        <h6 class="text-muted">Heading Sizes (pt)</h6>
+        <div class="row g-2">
+          <div class="col-6">
+            <label style="font-size: 11px;">H1</label>
+            <input type="number" class="form-control form-control-sm" id="heading1Size" value="16" min="12" max="24">
+          </div>
+          <div class="col-6">
+            <label style="font-size: 11px;">H2</label>
+            <input type="number" class="form-control form-control-sm" id="heading2Size" value="14" min="11" max="20">
+          </div>
+          <div class="col-6">
+            <label style="font-size: 11px;">H3</label>
+            <input type="number" class="form-control form-control-sm" id="heading3Size" value="13" min="10" max="18">
+          </div>
+        </div>
+      </div>
+
+      <!-- Heading Colors -->
+      <div class="mb-3">
+        <h6 class="text-muted">Heading Colors</h6>
+        <div class="form-group mb-2">
+          <label for="heading1Color" class="form-label" style="font-size: 12px;">H1 Color</label>
+          <select class="form-select form-select-sm" id="heading1Color">
+            <option value="">Default (Black)</option>
+            <option value="000080">Dark Blue</option>
+            <option value="2563eb">Blue</option>
+            <option value="1e40af">Royal Blue</option>
+            <option value="1f2937">Dark Gray</option>
+          </select>
+        </div>
+        <div class="form-group mb-2">
+          <label for="heading2Color" class="form-label" style="font-size: 12px;">H2 Color</label>
+          <select class="form-select form-select-sm" id="heading2Color">
+            <option value="">Default (Black)</option>
+            <option value="1e3a8a">Navy Blue</option>
+            <option value="374151">Gray</option>
+            <option value="065f46">Dark Green</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Spacing Settings -->
+      <div class="mb-3">
+        <h6 class="text-muted">Spacing</h6>
+        <div class="form-group mb-2">
+          <label for="lineSpacing" class="form-label" style="font-size: 12px;">Line Spacing</label>
+          <select class="form-select form-select-sm" id="lineSpacing">
+            <option value="1.0">Single (1.0)</option>
+            <option value="1.15">1.15</option>
+            <option value="1.5" selected>1.5</option>
+            <option value="2.0">Double (2.0)</option>
+          </select>
+        </div>
+        <div class="form-group mb-2">
+          <label for="paragraphSpacing" class="form-label" style="font-size: 12px;">Paragraph Spacing (pt)</label>
+          <input type="number" class="form-control form-control-sm" id="paragraphSpacing" value="6" min="0" max="20">
+        </div>
+      </div>
+
+      <!-- Alignment -->
+      <div class="mb-3">
+        <h6 class="text-muted">Alignment</h6>
+        <div class="form-group mb-2">
+          <label for="bodyAlignment" class="form-label" style="font-size: 12px;">Body Text</label>
+          <select class="form-select form-select-sm" id="bodyAlignment">
+            <option value="left">Left</option>
+            <option value="justify" selected>Justify</option>
+            <option value="center">Center</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Document Features -->
+      <div class="mb-3">
+        <h6 class="text-muted">Document Features</h6>
+        <div class="form-check form-check-sm">
+          <input class="form-check-input" type="checkbox" id="optTOC" checked>
+          <label class="form-check-label" for="optTOC" style="font-size: 12px;">Table of Contents</label>
+        </div>
+        <div class="form-check form-check-sm">
+          <input class="form-check-input" type="checkbox" id="optLOF" checked>
+          <label class="form-check-label" for="optLOF" style="font-size: 12px;">List of Figures</label>
+        </div>
+        <div class="form-check form-check-sm">
+          <input class="form-check-input" type="checkbox" id="optLOT" checked>
+          <label class="form-check-label" for="optLOT" style="font-size: 12px;">List of Tables</label>
+        </div>
+        <div class="form-check form-check-sm">
+          <input class="form-check-input" type="checkbox" id="optNLP" checked>
+          <label class="form-check-label" for="optNLP" style="font-size: 12px;">NLP Heading Detection</label>
+        </div>
+      </div>
+
+      <!-- Status Log -->
+      <div class="mt-4">
+        <h6>Status Log</h6>
+        <div id="statusLog" style="max-height: 200px; overflow-y: auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-buttons">
+    <button class="btn btn-outline-light btn-sm" id="resetDefaultsBtn">
+      🔄 Reset to Defaults
+    </button>
+    <button class="btn btn-primary btn-lg" id="startFormatBtn">
+      ✨ Start Formatting
+    </button>
+    <button class="btn btn-success btn-lg" id="downloadBtn" style="display:none;">
+      📥 Download DOCX
+    </button>
+    <button class="btn btn-secondary" id="backBtn">
+      ← Back to Editor
+    </button>
+  </div>
+
+  <script src="/public/js/common.js"></script>
+  <script src="/public/js/formatter.js"></script>
+</body>
+</html>

@@ -35,6 +35,7 @@ const TOOLBAR_OPTIONS = [
   [{ list: 'ordered' }, { list: 'bullet' }],
   [{ align: [] }],
   ['clean'],
+  ['formatDocument'],
 ];
 
 // ─── Status badge ────────────────────────────────────────────────────────────
@@ -139,6 +140,74 @@ function applyColorToDelta(delta, color) {
   };
 }
 
+// ─── NLP Formatting ──────────────────────────────────────────────────────────
+async function formatDocumentWithNLP() {
+  if (!quillInstance || !currentProjectId || !canEditDoc) {
+    alert('Cannot format document in read-only mode');
+    return;
+  }
+
+  const confirmed = confirm(
+    'This will open the live formatting page where you can:\n\n' +
+    '• See formatting progress in real-time\n' +
+    '• Preview the formatted document\n' +
+    '• Download as DOCX when complete\n\n' +
+    'Original document will remain unchanged.\n\n' +
+    'Continue?'
+  );
+
+  if (!confirmed) return;
+
+  // Redirect to formatter page
+  window.location.href = `/formatter?projectId=${currentProjectId}`;
+}
+
+// Register custom format button handler
+// function setupFormatButton() {
+//   // Wait for Quill toolbar to be rendered
+//   setTimeout(() => {
+//     const formatBtn = document.querySelector('.ql-formatDocument');
+//     if (formatBtn) {
+//       formatBtn.innerHTML = 'Apply NLP Formatting';
+//       formatBtn.addEventListener('click', formatDocumentWithNLP);
+//     }
+//   }, 500);
+// }
+
+function setupFormatButton() {
+  // Wait for Quill toolbar to be rendered
+  setTimeout(() => {
+    const formatBtn = document.querySelector('.ql-formatDocument');
+    if (formatBtn) {
+      // 1. Set the text content
+      formatBtn.innerHTML = 'Apply NLP Formatting';
+
+      // 2. Apply inline layouts and dimensions
+      formatBtn.style.setProperty('display', 'inline-flex', 'important');
+      formatBtn.style.setProperty('align-items', 'center', 'important');
+      formatBtn.style.setProperty('justify-content', 'center', 'important');
+      formatBtn.style.setProperty('white-space', 'nowrap', 'important');
+      formatBtn.style.setProperty('width', 'auto', 'important');
+      formatBtn.style.setProperty('height', '24px', 'important');
+      
+      // 3. Apply padding, margins, and borders
+      formatBtn.style.setProperty('padding', '0 12px', 'important');
+      formatBtn.style.setProperty('margin-left', '10px', 'important');
+      formatBtn.style.setProperty('border-radius', '4px', 'important');
+
+      // 4. Set color, text size, and look
+      formatBtn.style.setProperty('background-color', '#002D62', 'important'); // Change color here
+      formatBtn.style.setProperty('color', '#FFFFFF', 'important');
+      formatBtn.style.setProperty('font-size', '11px', 'important');
+      formatBtn.style.setProperty('font-weight', '500', 'important');
+
+      // 5. Link your click handler
+      formatBtn.addEventListener('click', formatDocumentWithNLP);
+    }
+  }, 500);
+}
+
+
 // ─── Save ────────────────────────────────────────────────────────────────────
 function startAutosaveLoop() {
   if (saveTimer) clearInterval(saveTimer);
@@ -231,9 +300,46 @@ async function loadProjectDocument(projectId) {
     const doc      = response.document;
     canEditDoc     = response.canEdit;
 
+    // quillInstance = new Quill('#singleEditor', {
+    //   theme:    'snow',
+    //   modules:  { toolbar: TOOLBAR_OPTIONS },
+    //   readOnly: !canEditDoc,
+    // });
+
+    // removed automatic listing feature of quill
+
+
     quillInstance = new Quill('#singleEditor', {
       theme:    'snow',
-      modules:  { toolbar: TOOLBAR_OPTIONS },
+      modules:  { 
+        toolbar: TOOLBAR_OPTIONS,
+        keyboard: {
+          bindings: {
+            // Disable automatic list creation on "1. " pattern
+            'list autofill': {
+              key: ' ',
+              collapsed: true,
+              format: { list: false },
+              prefix: /^\d+\.$/,
+              handler: function(range, context) {
+                // Do nothing - just insert the space normally
+                return true;
+              }
+            },
+            // Disable automatic bullet list on "- " or "* " pattern
+            'bullet autofill': {
+              key: ' ',
+              collapsed: true,
+              format: { list: false },
+              prefix: /^[-*]$/,
+              handler: function(range, context) {
+                // Do nothing - just insert the space normally
+                return true;
+              }
+            }
+          }
+        }
+      },
       readOnly: !canEditDoc,
     });
 
@@ -260,6 +366,10 @@ async function loadProjectDocument(projectId) {
     // Watch for content height changes → redraw page lines
     const ro = new ResizeObserver(() => updatePageLines());
     ro.observe(quillInstance.root);
+
+    // After creating Quill instance and moving toolbar, add:
+    setupFormatButton();
+
 
     // Socket join — document_init fires once joined and seeds content
     setupRealTimeSync(projectId);

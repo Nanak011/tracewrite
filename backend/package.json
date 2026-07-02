@@ -8,6 +8,13 @@
     "dev": "nodemon server.js",
     "test": "jest"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "temp/*",
+      "*.docx",
+      "*.json"
+    ]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -18,9 +25,11 @@
     "brevo": "^1.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "docx": "^9.7.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
+    "mammoth": "^1.12.0",
     "mysql2": "^3.22.3",
     "nodemailer": "^8.0.10",
     "pdfkit": "^0.18.0",
